@@ -1,0 +1,17 @@
+# Optional local dev stack for {{projectName}}
+services:
+  anvil:
+    image: ghcr.io/foundry-rs/foundry:latest
+    command: anvil --host 0.0.0.0
+    ports:
+      - "8545:8545"
+
+  api:
+    build:
+      context: ./backend/api
+    ports:
+      - "3001:3001"
+    environment:
+      - API_PORT=3001
+    profiles:
+      - fullstack

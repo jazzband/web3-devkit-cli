@@ -1,0 +1,29 @@
+{
+  "name": "web3-devkit",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Open-source CLI for EVM + Solana developers to bootstrap, deploy, and manage Web3 projects",
+  "license": "MIT",
+  "workspaces": [
+    "packages/*"
+  ],
+  "scripts": {
+    "build": "npm run build --workspaces --if-present",
+    "dev": "npm run dev -w @web3-devkit/cli",
+    "web3": "node packages/cli/dist/index.js",
+    "clean": "npm run clean --workspaces --if-present",
+    "typecheck": "npm run typecheck --workspaces --if-present"
+  },
+  "engines": {
+    "node": ">=18.0.0"
+  },
+  "keywords": [
+    "web3",
+    "cli",
+    "evm",
+    "solana",
+    "foundry",
+    "hardhat",
+    "anchor"
+  ]
+}

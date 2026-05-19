@@ -1,0 +1,35 @@
+{
+  "name": "@web3-devkit/cli",
+  "version": "0.1.0",
+  "description": "web3-devkit CLI — bootstrap, deploy, and manage Web3 projects",
+  "type": "module",
+  "bin": {
+    "web3": "./dist/index.js"
+  },
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "files": ["dist"],
+  "scripts": {
+    "build": "tsc -p tsconfig.json",
+    "clean": "rm -rf dist",
+    "dev": "node --watch dist/index.js",
+    "typecheck": "tsc -p tsconfig.json --noEmit"
+  },
+  "dependencies": {
+    "@web3-devkit/core": "0.1.0",
+    "@web3-devkit/evm": "0.1.0",
+    "@web3-devkit/generators": "0.1.0",
+    "@web3-devkit/integrations": "0.1.0",
+    "@web3-devkit/solana": "0.1.0",
+    "@web3-devkit/templates": "0.1.0",
+    "chalk": "^5.4.1",
+    "commander": "^13.1.0",
+    "inquirer": "^12.4.2",
+    "ora": "^8.2.0",
+    "zod": "^3.24.2"
+  },
+  "devDependencies": {
+    "@types/node": "^22.13.10",
+    "typescript": "^5.8.2"
+  }
+}

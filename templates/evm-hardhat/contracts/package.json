@@ -1,0 +1,16 @@
+{
+  "name": "{{projectNameKebab}}-contracts",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "compile": "hardhat compile",
+    "test": "hardhat test",
+    "deploy:local": "hardhat run scripts/deploy.ts --network localhost"
+  },
+  "devDependencies": {
+    "@nomicfoundation/hardhat-toolbox": "^5.0.0",
+    "hardhat": "^2.22.19",
+    "typescript": "^5.8.2",
+    "ts-node": "^10.9.2"
+  }
+}
