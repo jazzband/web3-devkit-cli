@@ -6,6 +6,7 @@ import { checkSolanaNetwork } from "@web3-devkit/solana";
 import { printKeyValue, statusColor } from "../utils/output.js";
 import { resolveTarget } from "../utils/resolve-chain.js";
 import { configRpcUrl, loadConfigWithEnv } from "../utils/project-config.js";
+import { writeln, writeJson } from "../utils/logger.js";
 
 interface NetworkFlags {
   chain?: string;
@@ -37,20 +38,11 @@ export function registerNetworkCommand(program: Command): void {
           spinner.stop();
 
           if (flags.json) {
-            console.log(
-              JSON.stringify(
-                {
-                  ...result,
-                  blockNumber: result.blockNumber.toString(),
-                },
-                null,
-                2,
-              ),
-            );
+            writeJson({ ...result, blockNumber: result.blockNumber.toString() });
             return;
           }
 
-          console.log();
+          writeln();
           printKeyValue("Network:", result.network);
           printKeyValue("Chain ID:", String(result.chainId));
           printKeyValue("Block:", result.blockNumber.toString());
@@ -65,11 +57,11 @@ export function registerNetworkCommand(program: Command): void {
           spinner.stop();
 
           if (flags.json) {
-            console.log(JSON.stringify(result, null, 2));
+            writeJson(result);
             return;
           }
 
-          console.log();
+          writeln();
           printKeyValue("Network:", result.network);
           printKeyValue("Slot:", String(result.slot));
           printKeyValue("RPC Latency:", `${result.latencyMs}ms`);

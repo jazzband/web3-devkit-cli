@@ -17,6 +17,7 @@ import {
   type Chain,
   type GeneratorVariantMeta,
 } from "@web3-devkit/generators";
+import { writeln, writeWarn } from "../utils/logger.js";
 
 interface GenerateFlags {
   chain?: string;
@@ -159,7 +160,7 @@ async function runGenerate(category: GenerateCategory, flags: GenerateFlags): Pr
       },
     ]);
     if (!confirmed) {
-      console.log(chalk.yellow("Cancelled."));
+      writeWarn(chalk.yellow("Cancelled."));
       return;
     }
   }
@@ -184,12 +185,12 @@ async function runGenerate(category: GenerateCategory, flags: GenerateFlags): Pr
         `Wrote ${result.filesWritten} file(s)${result.filesSkipped ? `, skipped ${result.filesSkipped} existing` : ""}`,
       ),
     );
-    console.log();
-    console.log(chalk.bold.green("✓ Generated"));
-    console.log(`  ${chalk.dim("Path:")} ${result.targetDir}`);
-    console.log(`  ${chalk.dim("Variant:")} ${variantMeta.name}`);
-    console.log();
-    console.log(chalk.dim("See README in output folder for dependencies and next steps."));
+    writeln();
+    writeln(chalk.bold.green("✓ Generated"));
+    writeln(`  ${chalk.dim("Path:")} ${result.targetDir}`);
+    writeln(`  ${chalk.dim("Variant:")} ${variantMeta.name}`);
+    writeln();
+    writeln(chalk.dim("See README in output folder for dependencies and next steps."));
   } catch (err) {
     spinner.fail(chalk.red("Generation failed"));
     throw err;

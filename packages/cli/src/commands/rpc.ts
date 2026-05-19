@@ -6,6 +6,7 @@ import { testSolanaRpc, testSolanaRpcUrl } from "@web3-devkit/solana";
 import { printKeyValue, statusColor } from "../utils/output.js";
 import { resolveTarget } from "../utils/resolve-chain.js";
 import { configRpcUrl, loadConfigWithEnv } from "../utils/project-config.js";
+import { writeln, writeJson } from "../utils/logger.js";
 
 interface RpcFlags {
   chain?: string;
@@ -39,7 +40,7 @@ export function registerRpcCommand(program: Command): void {
           const solResult = await testSolanaRpcUrl(flags.url);
           spinner.stop();
           if (flags.json) {
-            console.log(JSON.stringify(solResult, null, 2));
+            writeJson(solResult);
           } else {
             printKeyValue("RPC URL:", solResult.url);
             printKeyValue("RPC Latency:", `${solResult.latencyMs}ms`);
@@ -65,7 +66,7 @@ export function registerRpcCommand(program: Command): void {
           const result = await testSolanaRpc(target.solanaNetwork, rpcUrl);
           spinner.stop();
           if (flags.json) {
-            console.log(JSON.stringify(result, null, 2));
+            writeJson(result);
           } else {
             printKeyValue("Network:", target.solanaNetwork.name);
             printKeyValue("RPC Latency:", `${result.latencyMs}ms`);
@@ -85,12 +86,10 @@ function printRpcResult(
   json?: boolean,
 ): void {
   if (json) {
-    console.log(
-      JSON.stringify({ ...result, blockNumber: result.blockNumber.toString() }, null, 2),
-    );
+    writeJson({ ...result, blockNumber: result.blockNumber.toString() });
     return;
   }
-  console.log();
+  writeln();
   printKeyValue("RPC Latency:", `${result.latencyMs}ms`);
   printKeyValue("Chain ID:", String(result.chainId));
   printKeyValue("Block:", result.blockNumber.toString());

@@ -20,6 +20,7 @@ import { detectEvmProject } from "@web3-devkit/evm";
 import { detectSolanaProject } from "@web3-devkit/solana";
 import { EVM_NETWORK_IDS } from "@web3-devkit/evm";
 import { printKeyValue } from "../utils/output.js";
+import { writeln, writeJson, writeRaw, writeWarn } from "../utils/logger.js";
 
 interface ConfigFlags {
   json?: boolean;
@@ -51,11 +52,11 @@ async function detectFramework(cwd: string): Promise<Framework | undefined> {
 
 function printConfig(config: ProjectConfig, json?: boolean): void {
   if (json) {
-    console.log(JSON.stringify(config, null, 2));
+    writeJson(config);
     return;
   }
-  console.log(chalk.bold("Project config"));
-  console.log(JSON.stringify(config, null, 2));
+  writeln(chalk.bold("Project config"));
+  writeJson(config);
 }
 
 async function runInit(cwd: string, flags: ConfigFlags): Promise<void> {
@@ -70,7 +71,7 @@ async function runInit(cwd: string, flags: ConfigFlags): Promise<void> {
       },
     ]);
     if (!overwrite) {
-      console.log(chalk.yellow("Cancelled."));
+      writeWarn(chalk.yellow("Cancelled."));
       return;
     }
   }
@@ -143,7 +144,7 @@ async function runInit(cwd: string, flags: ConfigFlags): Promise<void> {
   try {
     const filePath = await saveProjectConfig(cwd, config);
     spinner.succeed(chalk.green("Config saved"));
-    console.log();
+    writeln();
     printKeyValue("Path:", filePath);
     printConfig(config, flags.json);
   } catch (err) {
@@ -164,14 +165,14 @@ async function runGet(cwd: string, key: string, flags: ConfigFlags): Promise<voi
   }
 
   if (flags.json) {
-    console.log(JSON.stringify({ [key]: value }, null, 2));
+    writeJson({ [key]: value });
     return;
   }
 
   if (typeof value === "object") {
-    console.log(JSON.stringify(value, null, 2));
+    writeJson(value);
   } else {
-    console.log(String(value));
+    writeRaw(String(value));
   }
 }
 
@@ -182,8 +183,8 @@ async function runSet(cwd: string, key: string, valueRaw: string): Promise<void>
   const updated = setConfigValue(existing, key, value);
   const filePath = await saveProjectConfig(cwd, updated);
 
-  console.log(chalk.green(`Updated ${key}`));
-  console.log(chalk.dim(filePath));
+  writeln(chalk.green(`Updated ${key}`));
+  writeln(chalk.dim(filePath));
 }
 
 export function registerConfigCommand(program: Command): void {
@@ -197,8 +198,8 @@ export function registerConfigCommand(program: Command): void {
       const loaded = await loadProjectConfig(cwd);
 
       if (!loaded) {
-        console.log(chalk.yellow(`No config at ${getConfigFilePath(cwd)}`));
-        console.log(chalk.dim("Run: web3 config init"));
+        writeWarn(chalk.yellow(`No config at ${getConfigFilePath(cwd)}`));
+        writeln(chalk.dim("Run: web3 config init"));
         return;
       }
 
@@ -241,6 +242,6 @@ export function registerConfigCommand(program: Command): void {
     .command("path")
     .description("Print config file path")
     .action(() => {
-      console.log(getConfigFilePath(process.cwd()));
+      writeRaw(getConfigFilePath(process.cwd()));
     });
 }

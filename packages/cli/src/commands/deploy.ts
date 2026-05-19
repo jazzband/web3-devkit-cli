@@ -18,6 +18,7 @@ import { deploySolana, detectSolanaProject } from "@web3-devkit/solana";
 import { printKeyValue } from "../utils/output.js";
 import { resolveTarget, type ChainKind } from "../utils/resolve-chain.js";
 import { loadConfigWithEnv } from "../utils/project-config.js";
+import { writeln, writeWarn } from "../utils/logger.js";
 
 interface DeployFlags {
   network?: string;
@@ -75,7 +76,7 @@ async function runEvmDeploy(cwd: string, flags: DeployFlags): Promise<void> {
         env.PRIVATE_KEY as `0x${string}`,
       );
       spinner.succeed(chalk.green("Gas estimate ready"));
-      console.log();
+      writeln();
       printKeyValue("Network:", target.evmNetwork.name);
       printKeyValue("Deployer:", deployer);
       printKeyValue("Gas units:", estimate.gas.toString());
@@ -96,7 +97,7 @@ async function runEvmDeploy(cwd: string, flags: DeployFlags): Promise<void> {
     flags.yes ?? false,
   );
   if (!ok) {
-    console.log(chalk.yellow("Cancelled."));
+    writeWarn(chalk.yellow("Cancelled."));
     return;
   }
 
@@ -139,7 +140,7 @@ async function runSolanaDeploy(cwd: string, flags: DeployFlags): Promise<void> {
     flags.yes ?? false,
   );
   if (!ok) {
-    console.log(chalk.yellow("Cancelled."));
+    writeWarn(chalk.yellow("Cancelled."));
     return;
   }
 
@@ -169,7 +170,7 @@ function printDeploySummary(
   record: Awaited<ReturnType<typeof deployEvm>>["record"],
   filePath: string,
 ): void {
-  console.log();
+  writeln();
   printKeyValue("Network:", record.network);
   printKeyValue("Saved:", chalk.dim(filePath));
 
@@ -189,8 +190,8 @@ function printDeploySummary(
     printKeyValue(`Program ${p.name}:`, p.programId);
   }
 
-  console.log();
-  console.log(chalk.dim("Run `web3 verify` to verify contracts on a block explorer."));
+  writeln();
+  writeln(chalk.dim("Run `web3 verify` to verify contracts on a block explorer."));
 }
 
 async function runDeploy(chain: ChainKind | undefined, flags: DeployFlags): Promise<void> {
@@ -244,7 +245,7 @@ export function registerDeployCommand(program: Command): void {
       const files = await listDeploymentFiles(cwd);
 
       if (files.length === 0) {
-        console.log(chalk.yellow("No deployments found in .web3-devkit/deployments/"));
+        writeWarn(chalk.yellow("No deployments found in .web3-devkit/deployments/"));
         return;
       }
 
@@ -252,7 +253,7 @@ export function registerDeployCommand(program: Command): void {
         const key = file.replace(".json", "");
         const data = await loadDeploymentFile(cwd, key);
         if (!data) continue;
-        console.log(chalk.bold(`\n${key}`));
+        writeln(chalk.bold(`\n${key}`));
         printKeyValue("  When:", data.latest.deployedAt);
         printKeyValue("  Chain:", data.latest.chain);
         printKeyValue("  Tool:", data.latest.tool ?? "—");

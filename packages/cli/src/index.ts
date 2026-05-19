@@ -1,6 +1,9 @@
 #!/usr/bin/env node
 import { Command } from "commander";
 import chalk from "chalk";
+import { cli, initLogger } from "./utils/logger.js";
+
+initLogger();
 import { registerInitCommand } from "./commands/init.js";
 import { registerGenerateCommand } from "./commands/generate.js";
 import { registerWalletCommand } from "./commands/wallet.js";
@@ -35,6 +38,9 @@ registerConfigCommand(program);
 
 program.parseAsync(process.argv).catch((err: unknown) => {
   const message = err instanceof Error ? err.message : String(err);
-  console.error(chalk.red("Error:"), message);
+  cli.error(chalk.red("Error:"), message);
+  if (err instanceof Error && err.stack && process.env.WEB3_LOG_LEVEL === "debug") {
+    cli.debug(err.stack);
+  }
   process.exit(1);
 });

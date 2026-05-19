@@ -10,6 +10,7 @@ import { verifyEvmContract } from "@web3-devkit/evm";
 import { printKeyValue } from "../utils/output.js";
 import { resolveTarget } from "../utils/resolve-chain.js";
 import { loadConfigWithEnv } from "../utils/project-config.js";
+import { cli, writeln } from "../utils/logger.js";
 
 interface VerifyFlags {
   network?: string;
@@ -76,7 +77,7 @@ export function registerVerifyCommand(program: Command): void {
 
         if (result.success) {
           spinner.succeed(chalk.green("Verified"));
-          console.log();
+          writeln();
           printKeyValue("Contract:", contractName);
           printKeyValue("Address:", address);
           if (result.explorerUrl) {
@@ -84,7 +85,7 @@ export function registerVerifyCommand(program: Command): void {
           }
         } else {
           spinner.fail(chalk.red("Verification failed"));
-          console.error(chalk.dim(result.message));
+          cli.error(chalk.dim(result.message));
           process.exitCode = 1;
         }
       } catch (err) {

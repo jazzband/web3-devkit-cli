@@ -1,5 +1,6 @@
 import chalk from "chalk";
 import type { HealthStatus } from "@web3-devkit/evm";
+import { writeln } from "./logger.js";
 
 export function statusColor(status: HealthStatus): (text: string) => string {
   switch (status) {
@@ -16,7 +17,7 @@ export function statusColor(status: HealthStatus): (text: string) => string {
 
 export function printKeyValue(label: string, value: string): void {
   const pad = 16;
-  console.log(`${chalk.dim(label.padEnd(pad))}${value}`);
+  writeln(`${chalk.dim(label.padEnd(pad))}${value}`);
 }
 
 export function shortenAddress(addr: string, head = 6, tail = 4): string {

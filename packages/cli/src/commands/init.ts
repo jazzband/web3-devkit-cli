@@ -11,6 +11,7 @@ import {
   TEMPLATES,
 } from "@web3-devkit/templates";
 import { templateIdSchema } from "@web3-devkit/core";
+import { writeln, writeWarn } from "../utils/logger.js";
 
 type InitCategory = "evm" | "solana" | "fullstack" | undefined;
 
@@ -92,12 +93,12 @@ async function confirmBootstrap(
   if (skip) return true;
 
   const meta = getTemplate(templateId);
-  console.log();
-  console.log(chalk.bold("Summary"));
-  console.log(`  ${chalk.dim("Template:")}  ${chalk.cyan(templateId)}${meta ? ` (${meta.name})` : ""}`);
-  console.log(`  ${chalk.dim("Project:")}   ${projectName}`);
-  console.log(`  ${chalk.dim("Directory:")} ${targetDir}`);
-  console.log();
+  writeln();
+  writeln(chalk.bold("Summary"));
+  writeln(`  ${chalk.dim("Template:")}  ${chalk.cyan(templateId)}${meta ? ` (${meta.name})` : ""}`);
+  writeln(`  ${chalk.dim("Project:")}   ${projectName}`);
+  writeln(`  ${chalk.dim("Directory:")} ${targetDir}`);
+  writeln();
 
   const { confirmed } = await inquirer.prompt<{ confirmed: boolean }>([
     {
@@ -166,7 +167,7 @@ async function runInit(category: InitCategory, flags: InitFlags): Promise<void> 
     flags.yes ?? false,
   );
   if (!confirmed) {
-    console.log(chalk.yellow("Cancelled."));
+    writeWarn(chalk.yellow("Cancelled."));
     return;
   }
 
@@ -182,16 +183,16 @@ async function runInit(category: InitCategory, flags: InitFlags): Promise<void> 
     });
 
     spinner.succeed(chalk.green(`Created ${result.filesWritten} files`));
-    console.log();
-    console.log(chalk.bold.green("✓ Project ready"));
-    console.log(`  ${chalk.dim("Path:")} ${result.targetDir}`);
-    console.log();
-    console.log(chalk.bold("Next steps:"));
+    writeln();
+    writeln(chalk.bold.green("✓ Project ready"));
+    writeln(`  ${chalk.dim("Path:")} ${result.targetDir}`);
+    writeln();
+    writeln(chalk.bold("Next steps:"));
     const cdPath = result.targetDir.startsWith(process.cwd() + path.sep)
       ? path.relative(process.cwd(), result.targetDir) || "."
       : result.targetDir;
-    console.log(`  ${chalk.cyan(`cd ${cdPath}`)}`);
-    console.log(`  ${chalk.dim("cat README.md")}`);
+    writeln(`  ${chalk.cyan(`cd ${cdPath}`)}`);
+    writeln(`  ${chalk.dim("cat README.md")}`);
   } catch (err) {
     spinner.fail(chalk.red("Bootstrap failed"));
     throw err;

@@ -9,6 +9,7 @@ import {
 } from "@solana/spl-token";
 import { Connection, Keypair, clusterApiUrl } from "@solana/web3.js";
 import fs from "node:fs";
+import { scriptLog } from "./logger.js";
 
 const DECIMALS = 9;
 const INITIAL_SUPPLY = 1_000_000n * 10n ** BigInt(DECIMALS);
@@ -35,8 +36,11 @@ async function main() {
   const ata = await getOrCreateAssociatedTokenAccount(connection, payer, mint, payer.publicKey);
   await mintTo(connection, payer, mint, ata.address, payer, INITIAL_SUPPLY);
 
-  console.log("Mint:", mint.toBase58());
-  console.log("Token account:", ata.address.toBase58());
+  scriptLog.info("Mint:", mint.toBase58());
+  scriptLog.info("Token account:", ata.address.toBase58());
 }
 
-main().catch(console.error);
+main().catch((err: unknown) => {
+  scriptLog.error(err instanceof Error ? err : String(err));
+  process.exitCode = 1;
+});

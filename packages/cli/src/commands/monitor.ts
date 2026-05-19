@@ -16,6 +16,7 @@ import {
 import { printKeyValue, shortenAddress } from "../utils/output.js";
 import { resolveTarget } from "../utils/resolve-chain.js";
 import { configRpcUrl, loadConfigWithEnv } from "../utils/project-config.js";
+import { writeln } from "../utils/logger.js";
 
 interface MonitorFlags {
   chain?: string;
@@ -35,25 +36,25 @@ function subcommandFlags(command: Command): MonitorFlags {
 function setupAbort(): AbortController {
   const controller = new AbortController();
   process.on("SIGINT", () => {
-    console.log(chalk.dim("\nStopping monitor..."));
+    writeln(chalk.dim("\nStopping monitor..."));
     controller.abort();
   });
   return controller;
 }
 
 function printTransferEvent(event: ParsedTransferEvent): void {
-  console.log();
-  console.log(chalk.bold.green(`New ${event.eventName}`));
+  writeln();
+  writeln(chalk.bold.green(`New ${event.eventName}`));
   printKeyValue("From:", event.from);
   printKeyValue("To:", event.to);
   printKeyValue("Amount:", `${event.amount} ${event.symbol}`);
   printKeyValue("Tx:", chalk.dim(event.txHash));
-  console.log(chalk.dim(`Block ${event.blockNumber}`));
+  writeln(chalk.dim(`Block ${event.blockNumber}`));
 }
 
 function printSolanaLog(event: SolanaLogEvent): void {
-  console.log();
-  console.log(chalk.bold.green(`New ${event.label}`));
+  writeln();
+  writeln(chalk.bold.green(`New ${event.label}`));
   printKeyValue("Signature:", shortenAddress(event.signature, 8, 8));
   printKeyValue("Slot:", String(event.slot));
   if (event.logs.length > 0) {
@@ -86,7 +87,7 @@ async function runContractMonitor(flags: MonitorFlags): Promise<void> {
   await loadDotEnv(process.cwd());
   const controller = setupAbort();
 
-  console.log(
+  writeln(
     chalk.dim(
       `Watching ${flags.address} for ${flags.event ?? "Transfer"} on ${target.evmNetwork.name} (Ctrl+C to stop)`,
     ),
@@ -116,7 +117,7 @@ async function runWalletMonitor(flags: MonitorFlags): Promise<void> {
 
   if (target.chain === "evm" && target.evmNetwork) {
     await loadDotEnv(process.cwd());
-    console.log(
+    writeln(
       chalk.dim(
         `Watching wallet ${flags.address} for ERC20 transfers on ${target.evmNetwork.name}`,
       ),
@@ -135,7 +136,7 @@ async function runWalletMonitor(flags: MonitorFlags): Promise<void> {
   }
 
   if (target.chain === "solana" && target.solanaNetwork) {
-    console.log(
+    writeln(
       chalk.dim(`Watching Solana wallet ${flags.address} on ${target.solanaNetwork.name}`),
     );
     await monitorSolanaWallet(
@@ -162,7 +163,7 @@ async function runTokenMonitor(flags: MonitorFlags): Promise<void> {
 
   if (target.chain === "evm" && target.evmNetwork) {
     await loadDotEnv(process.cwd());
-    console.log(
+    writeln(
       chalk.dim(
         `Watching token ${flags.address} on ${target.evmNetwork.name}${flags.wallet ? ` (wallet ${shortenAddress(flags.wallet)})` : ""}`,
       ),
@@ -183,7 +184,7 @@ async function runTokenMonitor(flags: MonitorFlags): Promise<void> {
   }
 
   if (target.chain === "solana" && target.solanaNetwork) {
-    console.log(chalk.dim(`Watching SPL mint ${flags.address}`));
+    writeln(chalk.dim(`Watching SPL mint ${flags.address}`));
     await monitorSolanaToken(
       {
         network: target.solanaNetwork,

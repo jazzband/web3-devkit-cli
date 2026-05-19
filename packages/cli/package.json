@@ -22,6 +22,7 @@
     "@web3-devkit/integrations": "0.1.0",
     "@web3-devkit/solana": "0.1.0",
     "@web3-devkit/templates": "0.1.0",
+    "@winstonts/winston2": "^1.0.5",
     "chalk": "^5.4.1",
     "commander": "^13.1.0",
     "inquirer": "^12.4.2",

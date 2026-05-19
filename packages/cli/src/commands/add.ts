@@ -11,6 +11,7 @@ import {
   resolveIntegrationsRoot,
   type IntegrationId,
 } from "@web3-devkit/integrations";
+import { writeln, writeWarn } from "../utils/logger.js";
 
 interface AddFlags {
   dir?: string;
@@ -59,7 +60,7 @@ async function runAdd(integrationId: IntegrationId, flags: AddFlags): Promise<vo
       },
     ]);
     if (!confirmed) {
-      console.log(chalk.yellow("Cancelled."));
+      writeWarn(chalk.yellow("Cancelled."));
       return;
     }
   }
@@ -86,29 +87,29 @@ async function runAdd(integrationId: IntegrationId, flags: AddFlags): Promise<vo
       ),
     );
 
-    console.log();
-    console.log(chalk.bold.green("✓ Integration added"));
-    console.log(`  ${chalk.dim("Path:")} ${result.targetDir}`);
-    console.log(`  ${chalk.dim("Integration:")} ${meta.name}`);
+    writeln();
+    writeln(chalk.bold.green("✓ Integration added"));
+    writeln(`  ${chalk.dim("Path:")} ${result.targetDir}`);
+    writeln(`  ${chalk.dim("Integration:")} ${meta.name}`);
 
     if (added.length > 0) {
-      console.log(`  ${chalk.dim("Dependencies:")} ${added.join(", ")}`);
-      console.log(chalk.dim("  Run npm install in the frontend directory."));
+      writeln(`  ${chalk.dim("Dependencies:")} ${added.join(", ")}`);
+      writeln(chalk.dim("  Run npm install in the frontend directory."));
     }
     if (skipped.length > 0) {
-      console.log(chalk.dim(`  Already in package.json: ${skipped.join(", ")}`));
+      writeln(chalk.dim(`  Already in package.json: ${skipped.join(", ")}`));
     }
 
     if (meta.envVars.length > 0) {
-      console.log();
-      console.log(chalk.bold("Environment variables"));
+      writeln();
+      writeln(chalk.bold("Environment variables"));
       for (const key of meta.envVars) {
-        console.log(`  ${chalk.cyan(key)}=`);
+        writeln(`  ${chalk.cyan(key)}=`);
       }
     }
 
-    console.log();
-    console.log(chalk.dim(`See integrations/${integrationId}/README.md for setup steps.`));
+    writeln();
+    writeln(chalk.dim(`See integrations/${integrationId}/README.md for setup steps.`));
   } catch (err) {
     spinner.fail(chalk.red("Failed to add integration"));
     throw err;

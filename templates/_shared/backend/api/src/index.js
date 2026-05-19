@@ -2,6 +2,7 @@
  * {{projectName}} API — minimal health server (expand in later milestones)
  */
 import http from "node:http";
+import { apiLog } from "./logger.js";
 
 const port = Number(process.env.API_PORT ?? 3001);
 
@@ -16,5 +17,5 @@ const server = http.createServer((req, res) => {
 });
 
 server.listen(port, () => {
-  console.log(`{{projectName}} API listening on http://localhost:${port}`);
+  apiLog.info(`{{projectName}} API listening on http://localhost:${port}`);
 });

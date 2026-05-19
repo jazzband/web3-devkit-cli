@@ -8,6 +8,7 @@
     "deploy:local": "hardhat run scripts/deploy.ts --network localhost"
   },
   "devDependencies": {
+    "@winstonts/winston2": "^1.0.5",
     "@nomicfoundation/hardhat-toolbox": "^5.0.0",
     "hardhat": "^2.22.19",
     "typescript": "^5.8.2",

@@ -6,5 +6,8 @@
   "scripts": {
     "dev": "node --watch src/index.js",
     "start": "node src/index.js"
+  },
+  "dependencies": {
+    "@winstonts/winston2": "^1.0.5"
   }
 }

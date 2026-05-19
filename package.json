@@ -7,6 +7,10 @@
   "workspaces": [
     "packages/*"
   ],
+  "dependencies": {
+    "dotenv": "^8.2.0",
+    "node-fetch": "^3.3.2"
+  },
   "scripts": {
     "build": "npm run build --workspaces --if-present",
     "dev": "npm run dev -w @web3-devkit/cli",

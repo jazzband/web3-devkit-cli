@@ -18,6 +18,7 @@ import {
 import { formatBalance, printKeyValue, shortenAddress } from "../utils/output.js";
 import { resolveTarget } from "../utils/resolve-chain.js";
 import { configRpcUrl, loadConfigWithEnv } from "../utils/project-config.js";
+import { writeln, writeJson } from "../utils/logger.js";
 
 interface WalletFlags {
   chain?: string;
@@ -40,12 +41,12 @@ async function runCreate(flags: WalletFlags): Promise<void> {
   if (target.chain === "evm") {
     const wallet = createEvmWallet();
     if (flags.json) {
-      console.log(JSON.stringify({ chain: "evm", ...wallet }, null, 2));
+      writeJson({ chain: "evm", ...wallet });
     } else {
-      console.log(chalk.bold.green("✓ EVM wallet created"));
+      writeln(chalk.bold.green("✓ EVM wallet created"));
       printKeyValue("Address:", wallet.address);
       printKeyValue("Private key:", chalk.yellow(wallet.privateKey));
-      console.log(chalk.red("\n⚠ Never share your private key or commit it to git."));
+      writeln(chalk.red("\n⚠ Never share your private key or commit it to git."));
     }
     if (flags.out) {
       await fs.writeFile(
@@ -53,25 +54,23 @@ async function runCreate(flags: WalletFlags): Promise<void> {
         JSON.stringify({ address: wallet.address, privateKey: wallet.privateKey }, null, 2),
         "utf8",
       );
-      console.log(chalk.dim(`Saved to ${path.resolve(flags.out)}`));
+      writeln(chalk.dim(`Saved to ${path.resolve(flags.out)}`));
     }
     return;
   }
 
   const wallet = createSolanaWallet();
   if (flags.json) {
-    console.log(
-      JSON.stringify(
-        { chain: "solana", publicKey: wallet.publicKey, secretKey: [...wallet.secretKey] },
-        null,
-        2,
-      ),
-    );
+    writeJson({
+      chain: "solana",
+      publicKey: wallet.publicKey,
+      secretKey: [...wallet.secretKey],
+    });
   } else {
-    console.log(chalk.bold.green("✓ Solana wallet created"));
+    writeln(chalk.bold.green("✓ Solana wallet created"));
     printKeyValue("Public key:", wallet.publicKey);
     printKeyValue("Secret key:", chalk.yellow(`[${wallet.secretKey.length} bytes]`));
-    console.log(chalk.red("\n⚠ Store secret key securely. Use --out to save keypair JSON."));
+    writeln(chalk.red("\n⚠ Store secret key securely. Use --out to save keypair JSON."));
   }
   if (flags.out) {
     await fs.writeFile(
@@ -79,7 +78,7 @@ async function runCreate(flags: WalletFlags): Promise<void> {
       JSON.stringify(Array.from(wallet.secretKey)),
       "utf8",
     );
-    console.log(chalk.dim(`Saved keypair bytes to ${path.resolve(flags.out)}`));
+    writeln(chalk.dim(`Saved keypair bytes to ${path.resolve(flags.out)}`));
   }
 }
 
@@ -100,16 +99,14 @@ async function runBalance(flags: WalletFlags): Promise<void> {
       spinner.stop();
 
       if (flags.json) {
-        console.log(
-          JSON.stringify({
-            chain: "evm",
-            network: target.evmNetwork.id,
-            address: flags.address,
-            native: { symbol: target.evmNetwork.nativeSymbol, balance: native },
-          }),
-        );
+        writeJson({
+          chain: "evm",
+          network: target.evmNetwork.id,
+          address: flags.address,
+          native: { symbol: target.evmNetwork.nativeSymbol, balance: native },
+        });
       } else {
-        console.log();
+        writeln();
         printKeyValue("Wallet:", shortenAddress(flags.address));
         printKeyValue(
           `${target.evmNetwork.nativeSymbol} Balance:`,
@@ -129,16 +126,14 @@ async function runBalance(flags: WalletFlags): Promise<void> {
       spinner.stop();
 
       if (flags.json) {
-        console.log(
-          JSON.stringify({
-            chain: "solana",
-            network: target.solanaNetwork.id,
-            address: flags.address,
-            native: { symbol: "SOL", balance: native },
-          }),
-        );
+        writeJson({
+          chain: "solana",
+          network: target.solanaNetwork.id,
+          address: flags.address,
+          native: { symbol: "SOL", balance: native },
+        });
       } else {
-        console.log();
+        writeln();
         printKeyValue("Wallet:", shortenAddress(flags.address, 4, 4));
         printKeyValue("SOL Balance:", formatBalance("SOL", native));
       }
@@ -195,11 +190,11 @@ async function runTokens(flags: WalletFlags): Promise<void> {
       spinner.stop();
 
       if (flags.json) {
-        console.log(JSON.stringify({ native, tokens }, null, 2));
+        writeJson({ native, tokens });
         return;
       }
 
-      console.log();
+      writeln();
       printKeyValue("Wallet:", shortenAddress(flags.address));
       printKeyValue(
         `${target.evmNetwork.nativeSymbol} Balance:`,
@@ -220,11 +215,11 @@ async function runTokens(flags: WalletFlags): Promise<void> {
       spinner.stop();
 
       if (flags.json) {
-        console.log(JSON.stringify({ native, tokens }, null, 2));
+        writeJson({ native, tokens });
         return;
       }
 
-      console.log();
+      writeln();
       printKeyValue("Wallet:", shortenAddress(flags.address, 4, 4));
       printKeyValue("SOL Balance:", formatBalance("SOL", native));
       for (const t of tokens) {

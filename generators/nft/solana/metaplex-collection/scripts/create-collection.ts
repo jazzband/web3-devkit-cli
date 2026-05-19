@@ -3,16 +3,20 @@
  * Extend with Umi / mpl-core or token-metadata SDK for your Metaplex version.
  */
 import { Connection, Keypair, clusterApiUrl } from "@solana/web3.js";
+import { scriptLog } from "./logger.js";
 
 async function main() {
   const rpc = process.env.SOLANA_RPC_URL ?? clusterApiUrl("devnet");
   const connection = new Connection(rpc, "confirmed");
   const payer = Keypair.generate(); // replace with wallet loader
 
-  console.log("{{contractName}} collection setup");
-  console.log("RPC:", connection.rpcEndpoint);
-  console.log("Payer (demo):", payer.publicKey.toBase58());
-  console.log("Implement collection + candy machine using @metaplex-foundation/* packages.");
+  scriptLog.info("{{contractName}} collection setup");
+  scriptLog.info("RPC:", connection.rpcEndpoint);
+  scriptLog.info("Payer (demo):", payer.publicKey.toBase58());
+  scriptLog.info("Implement collection + candy machine using @metaplex-foundation/* packages.");
 }
 
-main().catch(console.error);
+main().catch((err: unknown) => {
+  scriptLog.error(err instanceof Error ? err : String(err));
+  process.exitCode = 1;
+});
